@@ -2,17 +2,33 @@
 #include <vector>
 #include <map>
 #include <new>
+#include <string>
 #include "myalocator.h"
 #include "unlist.h"
 
-int main(int, char**)
+
+template<typename T, int te = 10>
+class t
 {
-  
-      std::vector<std::string, Myallocator<std::string>> list;
-        for(std::size_t i =0; i < 5; ++i)
-         list.push_back("i");
-    std::cout << list[0] << std::endl;
-   
+    const int _t;
+    char buff[te];
+public:
+    t(int t) : _t(t) {}
+};
+
+int main(int, char**)
+{       
+
+    // otus::unlist<int, Myallocator<int>> test;
+    // test.push_front(10);
+      std::vector<int, Myallocator<int, 500>> list;
+        for(std::size_t i =0; i < 10; ++i)
+         list.push_back(i);
+        //  list.push_back("Test string"+std::to_string(i));
+    //std::cout << list[0] << std::endl;
+   for(auto& s: list)
+      std::cout<< s << " ";
+    std::cout << std::endl;
 
 //    //Сделать резервирование памяти в самом алокаторе и уже отуда отдавать ее!!!
 
