@@ -1,6 +1,6 @@
 #pragma once
-#include <memory>
 #include <iostream>
+#include <memory>
 
 
 namespace otus
@@ -9,52 +9,78 @@ namespace otus
     template <typename T, typename Allocator = std::allocator<T>>
     class unlist
     {
-        using allocator_type = Allocator;
-        using value_type = T;
-        using pointer = T*;
-        using size_type = std::size_t;
-
-        allocator_type _alloc;
-        pointer _p = nullptr;
-       
+    protected:
         struct Node
         {
             T date;
-            Node* next;
+            Node *next;
         };
 
-        Node* start;
-        Node* end;
-        const size_type _size;
-        size_type _count = 0;
-        
     public:
+        using value_type = T;
+        using allocator_type = Allocator;
+        using pointer = T *;
+        using size_type = std::size_t;
+        using _node_alloc_type = typename Allocator::rebind<Node>::other;
 
-        explicit unlist(size_type size = 10, const Allocator& alloc = allocator_type());
+    protected:
+        _node_alloc_type _alloc;
+        Node *front = nullptr;
+        Node *end = nullptr;
+        const size_type _size;
+        size_type _count;
 
-        void push_front(const T& value);
+    public:
+        explicit unlist(const Allocator &alloc = Allocator());
+
+        bool push_front(const T &value);
 
         ~unlist();
-
+    protected:
+        bool isfull();
     };
 
     template <typename T, typename Allocator>
-    otus::unlist<T, Allocator>::unlist(size_type size, const Allocator& alloc) : _alloc(alloc), _size(size)
+    unlist<T, Allocator>::unlist(const Allocator &alloc) : _alloc(alloc), _size(10), _count(0)
     {
-       _p = _alloc.allocate(size);
-        std::cout << "ulist: "<< _p << std::endl;;
+ 
     }
 
     template <typename T, typename Allocator>
-    otus::unlist<T, Allocator>::~unlist()
+    bool unlist<T, Allocator>::push_front(const T &value)
     {
-        _alloc.deallocate(_p, _size);
+        if(isfull())
+            return false;
+
+        Node temp{value, nullptr};
+
+        auto p = _alloc.allocate(1);
+        _alloc.construct(p,temp);
+
+        ++_count;
+
+        if(front == nullptr)
+        {
+            front = p;
+        }
+        else
+        {
+            end->next = p;
+        }
+
+        end = p;
+        return true;
     }
 
     template <typename T, typename Allocator>
-    void otus::unlist<T, Allocator>::push_front(const T& value)
+    bool unlist<T, Allocator>::isfull()
     {
-        _alloc.construct(_p + _count++, value);
+        return (_count >= _size)? true : false;
+    }
+
+    template <typename T, typename Allocator>
+    unlist<T, Allocator>::~unlist()
+    {
+
     }
 }
-

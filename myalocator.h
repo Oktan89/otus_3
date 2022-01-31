@@ -9,7 +9,8 @@
 //2 param set_byte - set count byte for all object to be placed on the stack
 template <class T, int set_byte = 500>
 struct Myallocator
-{     
+{
+public:     
   using value_type = T;
   using pointer = T*;
   using const_pointer = const T*;
@@ -19,7 +20,7 @@ struct Myallocator
   using difference_type = std::ptrdiff_t;
   using propagate_on_container_move_assignment = std::true_type;
   using is_always_equal = std::true_type;
-
+  
 private:
  
   char buff[set_byte];
