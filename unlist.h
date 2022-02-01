@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 #include <memory>
 
 
@@ -9,12 +8,19 @@ namespace otus
     template <typename T, typename Allocator = std::allocator<T>>
     class unlist
     {
-    protected:
+    
         struct Node
         {
             T date;
             Node *next;
             Node(const T& value, Node* n) : date(value), next(n) {}
+        };
+        class Iterator
+        {
+            Node* _it;
+        public:
+            Iterator() : _it(nullptr) {}
+            Iterator(Node* it) : _it(it) {}
         };
 
     public:
@@ -23,20 +29,26 @@ namespace otus
         using pointer = T *;
         using size_type = std::size_t;
         using _node_alloc_type = typename Allocator::rebind<Node>::other;
-
+        using iterator = typename unlist<T, Allocator>::Iterator;
+      
     protected:
         _node_alloc_type _alloc;
-        Node *front = nullptr;
-        Node *end = nullptr;
+        Node *_front = nullptr;
+        Node *_end = nullptr;
         const size_type _size;
         size_type _count;
-
+        
     public:
+      
         explicit unlist(const Allocator& alloc = Allocator());
 
         bool push_back(const T& value);
      
         bool push_front(const T& value);
+
+        iterator begin();    
+
+        iterator end();
 
         ~unlist();
     protected:
@@ -60,16 +72,16 @@ namespace otus
 
         ++_count;
 
-        if(front == nullptr)
+        if(_front == nullptr)
         {
-            front = p;
+            _front = p;
         }
         else
         {
-            end->next = p;
+            _end->next = p;
         }
 
-        end = p;
+        _end = p;
         return true;
     }
 
@@ -84,16 +96,16 @@ namespace otus
 
         ++_count;
 
-        if(front == nullptr)
+        if(_front == nullptr)
         {
-            front = p;
+            _front = p;
         }
         else
         {
-            p->next = front;
+            p->next = _front;
         }
 
-        front = p;
+        _front = p;
         return true;
     }
 
@@ -103,9 +115,23 @@ namespace otus
         return (_count >= _size)? true : false;
     }
 
+   
     template <typename T, typename Allocator>
     unlist<T, Allocator>::~unlist()
     {
 
     }
+
+    template <typename T, typename Allocator>
+    typename unlist<T, Allocator>::Iterator unlist<T, Allocator>::begin()
+    {
+        return _front;
+    }
+
+    template <typename T, typename Allocator>
+    typename unlist<T, Allocator>::Iterator unlist<T, Allocator>::end()
+    {
+        return _end + _count;
+    }
+
 }

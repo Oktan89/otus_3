@@ -21,6 +21,10 @@ int main(int, char**)
    test.push_back(10);
    test.push_back(t);
    test.push_front(1000);
+  
+    
+ 
+
  //  printlist(test);
 //    std::cout<< "\n std::list\n";
      std::forward_list<int, Myallocator<int>> tet;
