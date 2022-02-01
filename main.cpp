@@ -3,18 +3,31 @@
 #include <map>
 #include <new>
 #include <string>
-#include <list>
+#include <forward_list>
 #include "myalocator.h"
 #include "unlist.h"
-
-
+template<typename T>
+void printlist(const T& t)
+{
+    for(const auto& l : t)
+        std::cout << l << " ";
+    std::cout<<std::endl;
+}   
 
 int main(int, char**)
-{       
+{  
+    int t = 100;
    otus::unlist<int, Myallocator<int>> test;
-   test.push_front(10);
-   test.push_front(20);
-    std::list<int> tet;
+   test.push_back(10);
+   test.push_back(t);
+   test.push_front(1000);
+ //  printlist(test);
+//    std::cout<< "\n std::list\n";
+     std::forward_list<int, Myallocator<int>> tet;
+//     tet.push_front(10);
+//     tet.push_front(20);
+    
+ //   printlist(tet);
 
     
     // otus::unlist<int, Myallocator<int>> test;

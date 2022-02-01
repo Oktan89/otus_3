@@ -3,12 +3,11 @@
 #include <typeinfo>
 #include <limits>
 
-#define _LOG_ 
-#define UNUSED(x) (void)(x)
+#define _LOG_ true
 
 //2 param set_byte - set count byte for all object to be placed on the stack
 template <class T, int set_byte = 500>
-struct Myallocator
+class Myallocator
 {
 public:     
   using value_type = T;
@@ -77,7 +76,7 @@ public:
         current_2 +=sizeof(value_type)*n;
         switch_mem = true;
     }
-#if defined _LOG_
+#if _LOG_
     report(p, n);
 #endif
     if(current_2 > end_2 || current > end)
@@ -87,13 +86,10 @@ public:
 
   }
 
-  void deallocate(pointer p, size_type n) noexcept
+  void deallocate([[maybe_unused]] pointer p, [[maybe_unused]] size_type n) noexcept
   {
-#if defined _LOG_
+#if _LOG_
     report(p, n, 0);
-#else
-    UNUSED(p);
-    UNUSED(n);
 #endif
     p = nullptr;
     (switch_mem)? current = begin : current_2 = begin_2;
@@ -103,16 +99,17 @@ public:
   template <class U, class... Args>
   void construct(U *p, Args &&...args)
   {
-#if defined _LOG_
+#if _LOG_
     std::cout << "construct: " << typeid(p).name() << '\n';
 #endif
     new ((void *)p) U(std::forward<Args>(args)...);
+
   }
 
   template< class U >
   void destroy( U *p )
   {
-#if defined _LOG_
+#if _LOG_
     std::cout << "destroy: " << typeid(p).name() << '\n';
 #endif
     p->~U();
@@ -125,7 +122,7 @@ public:
 
 private:
   
-#if defined _LOG_
+#if _LOG_
   void report(T *p, std::size_t n, bool alloc = true) const
   {
     std::cout << (alloc ? "Alloc: " : "Dealloc: ") << sizeof(T) * n

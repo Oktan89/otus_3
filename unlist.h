@@ -14,6 +14,7 @@ namespace otus
         {
             T date;
             Node *next;
+            Node(const T& value, Node* n) : date(value), next(n) {}
         };
 
     public:
@@ -31,9 +32,11 @@ namespace otus
         size_type _count;
 
     public:
-        explicit unlist(const Allocator &alloc = Allocator());
+        explicit unlist(const Allocator& alloc = Allocator());
 
-        bool push_front(const T &value);
+        bool push_back(const T& value);
+     
+        bool push_front(const T& value);
 
         ~unlist();
     protected:
@@ -41,21 +44,19 @@ namespace otus
     };
 
     template <typename T, typename Allocator>
-    unlist<T, Allocator>::unlist(const Allocator &alloc) : _alloc(alloc), _size(10), _count(0)
+    unlist<T, Allocator>::unlist(const Allocator& alloc) : _alloc(alloc), _size(10), _count(0)
     {
  
     }
-
+ 
     template <typename T, typename Allocator>
-    bool unlist<T, Allocator>::push_front(const T &value)
+    bool unlist<T, Allocator>::push_back(const T& value)
     {
         if(isfull())
             return false;
 
-        Node temp{value, nullptr};
-
         auto p = _alloc.allocate(1);
-        _alloc.construct(p,temp);
+        _alloc.construct(p, value, nullptr);
 
         ++_count;
 
@@ -69,6 +70,30 @@ namespace otus
         }
 
         end = p;
+        return true;
+    }
+
+    template <typename T, typename Allocator>
+    bool unlist<T, Allocator>::push_front(const T& value)
+    {
+        if(isfull())
+            return false;
+
+        auto p = _alloc.allocate(1);
+        _alloc.construct(p, value, nullptr);
+
+        ++_count;
+
+        if(front == nullptr)
+        {
+            front = p;
+        }
+        else
+        {
+            p->next = front;
+        }
+
+        front = p;
         return true;
     }
 
