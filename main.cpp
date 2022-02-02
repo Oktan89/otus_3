@@ -4,6 +4,7 @@
 #include <new>
 #include <string>
 #include <forward_list>
+#include <algorithm>
 #include "myalocator.h"
 #include "unlist.h"
 template<typename T>
@@ -16,18 +17,25 @@ void printlist(const T& t)
 
 int main(int, char**)
 {  
-    int t = 100;
-   otus::unlist<int, Myallocator<int>> test;
-   test.push_back(10);
-   test.push_back(t);
-   test.push_front(1000);
-  
+    otus::unlist<int, Myallocator<int>> test;
+    for(std::size_t i = 0; i < 31; ++i)
+    {
+        test.push_back(i);
+    }
+   
     
+    for(auto it = test.begin(); it != test.end(); ++it)
+        std::cout<< *it << std::endl;
  
-
+    // auto g = std::find(test.begin(), test.end(), 10);
+    // std::cout<< *g << std::endl;
+    for(auto& s : test)
+        std::cout<< s << " ";
+    std::cout<<std::endl;
  //  printlist(test);
 //    std::cout<< "\n std::list\n";
      std::forward_list<int, Myallocator<int>> tet;
+     
 //     tet.push_front(10);
 //     tet.push_front(20);
     

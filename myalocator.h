@@ -24,7 +24,9 @@ private:
  
   char buff[set_byte];
   char buff_2[sizeof(buff)];
+
   size_type _max_size = sizeof(buff) / sizeof(value_type);
+  size_type _courent_obg_T = 0;
   char* begin = buff;
   char* current = begin;
   char* end = begin + sizeof(buff);
@@ -59,8 +61,8 @@ public:
 
   pointer allocate(size_type n)
   {
-    if(n > _max_size)
-      throw std::runtime_error("bad_allocate size " + std::to_string(n) +", max size: " + std::to_string(_max_size)  + 
+    if(n >= _max_size || _courent_obg_T >= _max_size)
+      throw std::runtime_error("bad_allocate size " + std::to_string(_courent_obg_T) +", max size: " + std::to_string(_max_size)  + 
         " \'try increasing the byte_set parameter allocator \'");
 
     pointer p;
@@ -81,7 +83,7 @@ public:
 #endif
     if(current_2 > end_2 || current > end)
       throw std::bad_alloc();
-        
+    ++_courent_obg_T;    
     return p;
 
   }
