@@ -5,8 +5,9 @@
 
 #define _LOG_ true
 
-//2 param set_byte - set count byte for all object to be placed on the stack
-template <class T, int set_byte = 500>
+//1 param T - object
+//2 param set_size - sets the number of objects to be placed on the stack
+template <class T, int set_size = 500>
 class Myallocator
 {
 public:     
@@ -22,7 +23,7 @@ public:
   
 private:
  
-  char buff[set_byte];
+  char buff[set_size * sizeof(T)];
   char buff_2[sizeof(buff)];
 
   size_type _max_size = sizeof(buff) / sizeof(value_type);
@@ -38,7 +39,7 @@ private:
   bool switch_mem = true;
 public:
 
-  template <typename U, int copy_byte = set_byte>
+  template <typename U, int copy_byte = set_size>
   struct rebind
   {
     using other = Myallocator<U, copy_byte>;
@@ -47,8 +48,8 @@ public:
   Myallocator() = default;
   ~Myallocator() = default;
 
-  template <class U>
-  constexpr Myallocator(const Myallocator<U> &) noexcept {}
+  template <class U, int copy_byte = set_size>
+  constexpr Myallocator(const Myallocator<U, copy_byte> &) noexcept {}
 
   pointer address(reference x) const 
   {
@@ -61,8 +62,9 @@ public:
 
   pointer allocate(size_type n)
   {
-    if(n >= _max_size || _courent_obg_T >= _max_size)
-      throw std::runtime_error("bad_allocate size " + std::to_string(_courent_obg_T) +", max size: " + std::to_string(_max_size)  + 
+    if(n > _max_size || _courent_obg_T >=_max_size)
+      throw std::runtime_error("bad_allocate memory for object" + std::to_string(_courent_obg_T+1) +". Allocated size " 
+        + std::to_string(_courent_obg_T) +", max size: " + std::to_string(_max_size)  + 
         " \'try increasing the byte_set parameter allocator \'");
 
     pointer p;

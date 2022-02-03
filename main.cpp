@@ -7,37 +7,54 @@
 #include <algorithm>
 #include "myalocator.h"
 #include "unlist.h"
-template<typename T>
-void printlist(const T& t)
-{
-    for(const auto& l : t)
-        std::cout << l << " ";
-    std::cout<<std::endl;
-}   
 
+class my
+{
+    int b;
+    friend std::ostream& operator<<(std::ostream& out, const my& m);
+public:
+    my(){}
+    my(int a) : b(a)
+    {
+        std::cout<<"construct my "<<b <<"\n";
+    }
+    ~my()
+    {
+        std::cout<<"destruct ~my "<<b<<"\n";
+    }
+};
+
+std::ostream& operator<<(std::ostream& out, const my& m)
+{
+    out << m.b;
+    return out;
+}
 int main(int, char**)
 {  
-    otus::unlist<int, Myallocator<int>> test;
-    for(std::size_t i = 0; i < 31; ++i)
+
+ 
+    otus::unlist<my, Myallocator<my, 2>> test;
+    for(std::size_t i = 0; i < 2; ++i)
     {
         test.push_back(i);
     }
    
     
-    for(auto it = test.begin(); it != test.end(); ++it)
-        std::cout<< *it << std::endl;
+     for(auto it = test.begin(); it != test.end(); ++it)
+         std::cout<< *it << std::endl;
  
     // auto g = std::find(test.begin(), test.end(), 10);
     // std::cout<< *g << std::endl;
-    for(auto& s : test)
-        std::cout<< s << " ";
-    std::cout<<std::endl;
+    // for(auto& s : test)
+    //     std::cout<< s << " ";
+    // std::cout<<std::endl;
  //  printlist(test);
 //    std::cout<< "\n std::list\n";
-     std::forward_list<int, Myallocator<int>> tet;
+    //  std::forward_list<int, Myallocator<int, 2>> tet;
      
-//     tet.push_front(10);
-//     tet.push_front(20);
+    //  tet.push_front(10);
+    //  tet.push_front(20);
+     
     
  //   printlist(tet);
 

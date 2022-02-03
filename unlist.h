@@ -42,7 +42,7 @@ namespace otus
         Node *_front = nullptr;
         Node *_end = nullptr;
        // const size_type _size;
-        size_type _count;
+        size_type _count = 0;
         
     public:
       
@@ -57,8 +57,7 @@ namespace otus
         iterator end() const noexcept;
 
         ~unlist();
-    // protected:
-    //     bool isfull() const noexcept;
+
     };
 
     template <typename T, typename Allocator>
@@ -95,16 +94,20 @@ namespace otus
     }
 
     template <typename T, typename Allocator>
-    unlist<T, Allocator>::unlist(const Allocator& alloc) : _alloc(alloc), _count(0)
+    unlist<T, Allocator>::unlist(const Allocator& alloc) : _alloc(alloc)
     {
  
+    }
+
+    template <typename T, typename Allocator>
+    unlist<T, Allocator>::~unlist()
+    {
+        
     }
  
     template <typename T, typename Allocator>
     bool unlist<T, Allocator>::push_back(const T& value)
     {
-        // if(isfull())
-        //     return false;
 
         auto p = _alloc.allocate(1);
         _alloc.construct(p, value, nullptr);
@@ -127,8 +130,6 @@ namespace otus
     template <typename T, typename Allocator>
     bool unlist<T, Allocator>::push_front(const T& value)
     {
-        // if(isfull())
-        //     return false;
 
         auto p = _alloc.allocate(1);
         _alloc.construct(p, value, nullptr);
@@ -146,19 +147,6 @@ namespace otus
 
         _front = p;
         return true;
-    }
-
-    // template <typename T, typename Allocator>
-    // bool unlist<T, Allocator>::isfull() const noexcept
-    // {
-    //     return (_count >= _size)? true : false;
-    // }
-
-   
-    template <typename T, typename Allocator>
-    unlist<T, Allocator>::~unlist()
-    {
-
     }
 
     template <typename T, typename Allocator>
