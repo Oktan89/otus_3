@@ -29,67 +29,53 @@ std::ostream& operator<<(std::ostream& out, const my& m)
     out << m.b;
     return out;
 }
+
+std::size_t fact(std::size_t n)
+{
+    std::size_t r = 1;
+    for (std::size_t i = 2; i <= n; ++i)
+        r *= i;
+    return r;            
+}
+
+
 int main(int, char**)
 {  
 
- 
-    otus::unlist<my, Myallocator<my, 2>> test;
-    for(std::size_t i = 0; i < 2; ++i)
+    std::map<int, int> standart;
+    std::map<int, int, std::less<int>, Myallocator<int, 10>> myalloc;
+
+    for(std::size_t i = 0; i < 10; ++i)
     {
-        test.push_back(i);
+        std::size_t f = fact(i);
+        standart[i] = f;
+        myalloc[i] = f;
     }
-   
+
+    std::cout<< "\nMAP std::alocator\n";
+    for(auto& [key, set] : standart)
+        std::cout<< key << " " << set << std::endl;
     
-     for(auto it = test.begin(); it != test.end(); ++it)
-         std::cout<< *it << std::endl;
- 
-    // auto g = std::find(test.begin(), test.end(), 10);
-    // std::cout<< *g << std::endl;
-    // for(auto& s : test)
-    //     std::cout<< s << " ";
-    // std::cout<<std::endl;
- //  printlist(test);
-//    std::cout<< "\n std::list\n";
-    //  std::forward_list<int, Myallocator<int, 2>> tet;
-     
-    //  tet.push_front(10);
-    //  tet.push_front(20);
-     
+    std::cout<< "\nMAP Myalocator\n";
+    for(auto& [key, set] : standart)
+        std::cout<< key << " " << set << std::endl;
     
- //   printlist(tet);
-
     
-    // otus::unlist<int, Myallocator<int>> test;
-    // test.push_front(10);
-    //   std::vector<int, Myallocator<int, 500>> list;
-    //     for(std::size_t i =0; i < 10; ++i)
-    //      list.push_back(i);
-        //  list.push_back("Test string"+std::to_string(i));
-    //std::cout << list[0] << std::endl;
-//    for(auto& s: list)
-    //   std::cout<< s << " ";
-    // std::cout << std::endl;
+    otus::unlist<int> my;
+    otus::unlist<int, Myallocator<int, 10>> mylistalloc;
+    for(std::size_t i = 0; i < 10; ++i)
+    {
+        my.push_back(i);
+        mylistalloc.push_back(i);
+    }
+    
+    std::cout<< "\nMy conteiner std::alocator\n";
+    for(auto& m: my)
+        std::cout<< m <<std::endl;
 
-
-//    //Сделать резервирование памяти в самом алокаторе и уже отуда отдавать ее!!!
-
-    // std::vector<int, Myallocator<int>> vec{10, 10, 10};
-  
-//    auto m = std::map<
-// 		int,
-// 		int,
-// 		std::less<int>,
-// 		Myallocator<
-// 			std::pair<
-// 				const int, int>>>{};
-
-// 	for (int i = 0; i < 5; ++i) {
-// 		m[i] = i;
-// 	}
-
-//     for(auto it = m.begin(); it != m.end(); ++it)
-//         std::cout<< it->second << std::endl;
-
+    std::cout<< "\nMy conteiner Myalocator\n";
+    for(auto it = mylistalloc.begin(); it != mylistalloc.end(); ++it)
+        std::cout<< *it <<std::endl;
     
     return 0;
 }

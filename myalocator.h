@@ -2,8 +2,9 @@
 #include <memory>
 #include <typeinfo>
 #include <limits>
+#include <cassert>
 
-#define _LOG_ true
+#define _LOG_ false
 
 //1 param T - object
 //2 param set_size - sets the number of objects to be placed on the stack
@@ -63,10 +64,10 @@ public:
   pointer allocate(size_type n)
   {
     if(n > _max_size || _courent_obg_T >=_max_size)
-      throw std::runtime_error("bad_allocate memory for object" + std::to_string(_courent_obg_T+1) +". Allocated size " 
+      throw std::runtime_error("bad_allocate memory for object_" + std::to_string(_courent_obg_T+1) +". Allocated size " 
         + std::to_string(_courent_obg_T) +", max size: " + std::to_string(_max_size)  + 
-        " \'try increasing the byte_set parameter allocator \'");
-
+        " \'try increasing the set_size parameter allocator \'");
+ 
     pointer p;
     if(switch_mem)
     {
@@ -85,7 +86,7 @@ public:
 #endif
     if(current_2 > end_2 || current > end)
       throw std::bad_alloc();
-    ++_courent_obg_T;    
+    _courent_obg_T += n;    
     return p;
 
   }
@@ -95,9 +96,16 @@ public:
 #if _LOG_
     report(p, n, 0);
 #endif
-    p = nullptr;
+    [[maybe_unused]] char* __p = reinterpret_cast<char*>(p);
+    for(std::size_t i =0; i < n * sizeof(value_type); ++i)
+    {
+         [[maybe_unused]] char* temp = __p;
+         __p++;
+         *temp = '\000';     
+    }
+    
     (switch_mem)? current = begin : current_2 = begin_2;
-
+    _courent_obg_T -= n;
   }
 
   template <class U, class... Args>
@@ -140,4 +148,3 @@ template <class T, class U>
 bool operator==(const Myallocator<T> &, const Myallocator<U> &) { return true; }
 template <class T, class U>
 bool operator!=(const Myallocator<T> &, const Myallocator<U> &) { return false; }
-

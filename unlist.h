@@ -36,12 +36,11 @@ namespace otus
         using size_type = std::size_t;
         using _node_alloc_type = typename Allocator::rebind<Node>::other;
         using iterator = typename unlist<T, Allocator>::Iterator;
-        //using iterator = typename const unlist<T, Allocator>::Iterator;
+       
     protected:
         _node_alloc_type _alloc;
         Node *_front = nullptr;
         Node *_end = nullptr;
-       // const size_type _size;
         size_type _count = 0;
         
     public:
@@ -96,13 +95,21 @@ namespace otus
     template <typename T, typename Allocator>
     unlist<T, Allocator>::unlist(const Allocator& alloc) : _alloc(alloc)
     {
- 
+        
     }
 
     template <typename T, typename Allocator>
     unlist<T, Allocator>::~unlist()
     {
-        
+        Node *temp;
+
+        while (_front != nullptr)
+        {
+            temp = _front;
+            _front = _front->next;
+            _alloc.destroy(temp);
+            _alloc.deallocate(temp, 1);
+        }
     }
  
     template <typename T, typename Allocator>
