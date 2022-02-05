@@ -10,19 +10,19 @@ option(WITH_GOOGLE_TEST "Whether to build Google tets" ON)
 configure_file(version.h.in version.h)
 
 add_executable(aloc main.cpp)
-add_library(ipfilter_ver lib.cpp)
+add_library(aloc_ver lib.cpp)
 
 set_target_properties(aloc PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
 )
 
-target_include_directories(ipfilter_ver
+target_include_directories(aloc_ver
     PRIVATE "${CMAKE_BINARY_DIR}"
 )
 
 target_link_libraries(aloc PRIVATE
-    ipfilter_ver
+    aloc_ver
 )
 
 if(WITH_GOOGLE_TEST)
@@ -36,7 +36,7 @@ if(WITH_GOOGLE_TEST)
 
     target_link_libraries(google_test_version 
         gtest_main 
-        ipfilter_ver
+        aloc_ver
     )
 endif()
 
@@ -44,7 +44,7 @@ if (MSVC)
     target_compile_options(alocator PRIVATE
         /W4
     )
-    target_compile_options(ipfilter_ver PRIVATE
+    target_compile_options(aloc_ver PRIVATE
         /W4
     )
     if(WITH_GOOGLE_TEST)
@@ -56,7 +56,7 @@ else ()
     target_compile_options(aloc PRIVATE
         -Wall -Wextra -pedantic -Werror
     )
-    target_compile_options(ipfilter_ver PRIVATE
+    target_compile_options(aloc_ver PRIVATE
         -Wall -Wextra -pedantic -Werror
     )
     if(WITH_GOOGLE_TEST)
