@@ -67,7 +67,7 @@ namespace otus
     pointer allocate(size_type n)
     {
       if(n > _max_size || _courent_obg_T >=_max_size)
-        throw std::runtime_error("bad_allocate memory: request (" + std::to_string(_courent_obg_T+1) +"). Allocated object size " 
+        throw std::runtime_error("bad_allocate memory: request (" + std::to_string(_courent_obg_T+1) +") (size " + std::to_string(n) + "). Allocated object size " 
           + std::to_string(_courent_obg_T) +", max size: " + std::to_string(_max_size)  + 
           " \'try increasing the set_size parameter allocator");
   

@@ -18,7 +18,6 @@ std::size_t fact(std::size_t n)
 
 int main(int, char**)
 {  
-
     std::map<int, int> standart;
     std::map<int, int, std::less<int>, otus::Myallocator<int, 10>> myalloc;
    

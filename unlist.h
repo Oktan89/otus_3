@@ -45,11 +45,12 @@ namespace otus
         
     public:
         unlist() = default;
-        //unlist(const Allocator& alloc = Allocator());
 
         bool push_back(const T& value);
      
         bool push_front(const T& value);
+
+        size_type size() const noexcept {return _count;}
 
         iterator begin() const noexcept;    
 
@@ -59,6 +60,7 @@ namespace otus
 
     };
 
+    
     template <typename T, typename Allocator>
     T& unlist<T, Allocator>::iterator::operator*()
     {
@@ -91,12 +93,6 @@ namespace otus
     {
         return !(_it == rhs._it);
     }
-
-    // template <typename T, typename Allocator>
-    // unlist<T, Allocator>::unlist(const Allocator& alloc) : _alloc(alloc)
-    // {
-        
-    // }
 
     template <typename T, typename Allocator>
     unlist<T, Allocator>::~unlist()

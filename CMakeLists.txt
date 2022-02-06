@@ -36,6 +36,7 @@ if(WITH_GOOGLE_TEST)
 
     target_link_libraries(google_test_version 
         gtest_main 
+        gmock
         aloc_ver
     )
 endif()
