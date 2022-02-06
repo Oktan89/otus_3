@@ -4,7 +4,7 @@
 #include <limits>
 #include <cassert>
 
-#define _LOG_ 1
+#define _LOG_ 0
 
 //1 param T - object
 //2 param set_size - sets the number of objects to be placed on the stack
@@ -34,11 +34,11 @@ namespace otus
     size_type _courent_obg_T = 0;
     char* begin = buff;
     char* current = begin;
-    char* end = begin + sizeof(buff);
+    char* end = begin + sizeof(buff)-sizeof(value_type);
 
     char* begin_2 = buff_2;
     char* current_2 = begin_2;
-    char* end_2 = begin_2 + sizeof(buff_2);
+    char* end_2 = begin_2 + sizeof(buff_2)-sizeof(value_type);
 
     bool switch_mem = true;
   public:
@@ -67,9 +67,9 @@ namespace otus
     pointer allocate(size_type n)
     {
       if(n > _max_size || _courent_obg_T >=_max_size)
-        throw std::runtime_error("bad_allocate memory for object_" + std::to_string(_courent_obg_T+1) +". Allocated size " 
+        throw std::runtime_error("bad_allocate memory: request (" + std::to_string(_courent_obg_T+1) +"). Allocated object size " 
           + std::to_string(_courent_obg_T) +", max size: " + std::to_string(_max_size)  + 
-          " \'try increasing the set_size parameter allocator \'");
+          " \'try increasing the set_size parameter allocator");
   
       pointer p;
       if(switch_mem)
@@ -93,7 +93,7 @@ namespace otus
   #if _LOG_
       report(p, n);
   #endif
-      if(current_2 > end_2 || current > end)
+      if(current_2 > end_2 + sizeof(value_type) || current > end + sizeof(value_type))
         throw std::bad_alloc();
       _courent_obg_T += n;    
       return p;
@@ -101,7 +101,7 @@ namespace otus
     }
 private:
     void initmem() noexcept
-    {
+    { 
       for(std::size_t i = 0; i < sizeof(buff); ++i)
       {
         buff[i] = '\n';
@@ -119,14 +119,14 @@ private:
             memused = true;
             break;
           }
-          ++__p;
+          else ++__p;
         }
       return (memused)? nullptr : p;
     }
 
     pointer setmem(pointer p, char* end, size_type n)
     {
-        while(reinterpret_cast<char *>(p) < end)
+        while(reinterpret_cast<char *>(p) < end + sizeof(value_type))
         {
           if(nullptr == setmemObj(p, n))
             ++p;

@@ -44,8 +44,8 @@ namespace otus
         size_type _count = 0;
         
     public:
-      
-        explicit unlist(const Allocator& alloc = Allocator());
+        unlist() = default;
+        //unlist(const Allocator& alloc = Allocator());
 
         bool push_back(const T& value);
      
@@ -92,11 +92,11 @@ namespace otus
         return !(_it == rhs._it);
     }
 
-    template <typename T, typename Allocator>
-    unlist<T, Allocator>::unlist(const Allocator& alloc) : _alloc(alloc)
-    {
+    // template <typename T, typename Allocator>
+    // unlist<T, Allocator>::unlist(const Allocator& alloc) : _alloc(alloc)
+    // {
         
-    }
+    // }
 
     template <typename T, typename Allocator>
     unlist<T, Allocator>::~unlist()
