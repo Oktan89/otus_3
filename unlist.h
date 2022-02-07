@@ -36,7 +36,7 @@ namespace otus
         using size_type = std::size_t;
         using _node_alloc_type = typename Allocator::rebind<Node>::other;
         using iterator = typename unlist<T, Allocator>::Iterator;
-       
+        
     protected:
         _node_alloc_type _alloc;
         Node *_front = nullptr;
@@ -45,12 +45,18 @@ namespace otus
         
     public:
         unlist() = default;
-
+        unlist(const unlist& other);
+        // unlist(unlist&& other);
+        // unlist& operator=(const unlist& other);
+        // unlist& operator=(unlist&& other);
+        
         bool push_back(const T& value);
      
         bool push_front(const T& value);
 
         size_type size() const noexcept {return _count;}
+
+        [[nodiscard]] bool empty() const noexcept { return _front == _end;}
 
         iterator begin() const noexcept;    
 
@@ -67,7 +73,7 @@ namespace otus
         return _it->date;
     }
 
-    template <typename T, typename Allocator>
+    template <typename T, typename Allocator> 
     typename unlist<T, Allocator>::Iterator& unlist<T, Allocator>::iterator::operator++()
     {
         _it = _it->next;
@@ -92,6 +98,13 @@ namespace otus
     bool unlist<T, Allocator>::iterator::operator!=(const Iterator& rhs)
     {
         return !(_it == rhs._it);
+    }
+
+    template <typename T, typename Allocator>
+    unlist<T, Allocator>::unlist(const unlist& other)
+    {
+       for(auto &it : other)
+            push_back(it);
     }
 
     template <typename T, typename Allocator>
@@ -141,7 +154,7 @@ namespace otus
 
         if(_front == nullptr)
         {
-            _front = p;
+            _end = p;
         }
         else
         {
