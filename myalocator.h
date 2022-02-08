@@ -55,11 +55,11 @@ namespace otus
     template <class U, int copy_byte = set_size>
     constexpr Myallocator(const Myallocator<U, copy_byte> &) noexcept {}
 
-    pointer address(reference x) const 
+    pointer address(reference x) const noexcept
     {
       return &x; 
     }
-    const_pointer address(const_reference x) const 
+    const_pointer address(const_reference x) const noexcept
     {
       return &x; 
     }
@@ -147,8 +147,15 @@ public:
           __p++;
           *temp = '\n';     
       }
-      
-      (switch_mem)? current = begin : current_2 = begin_2;
+      if(__p >= begin && __p <= end)
+      {
+          current= begin;
+      }
+      else
+      {
+        current_2 = begin_2;
+      }
+     // (switch_mem)? (current = begin) : (current_2 = begin_2);
       _courent_obg_T -= n;
     }
 
@@ -171,7 +178,7 @@ public:
       p->~U();
     }
 
-    value_type max_size()
+    std::size_t max_size() const noexcept
     {
       return _max_size;
     }

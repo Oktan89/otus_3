@@ -16,6 +16,7 @@ std::size_t fact(std::size_t n)
 }
 
 
+
 int main(int, char**)
 {  
     // std::map<int, int> standart;
@@ -78,16 +79,25 @@ int main(int, char**)
     // for(auto& s : vecm)
     //     std::cout<< s << " ";
     // std::cout<<std::endl;
-
-    otus::unlist<int> l1;
+    otus::unlist<int, otus::Myallocator<int, 3>> l2;
+    {
+        otus::unlist<int, otus::Myallocator<int, 3>> l1;
         l1.push_front(1);
         l1.push_back(2);
         l1.push_back(3);
          for(auto it = l1.begin(); it != l1.end(); ++it)
-            std::cout << *it;
-    otus::unlist<int> l2 = l1;
+            std::cout << *it << '\n';
+     
+    l2 = l1;
+    l2.clear();
+    }
     
-   
-    std::cout<<"yesy\n";
+    //std::cout<< l2.max_size()<<"\n";
+    l2.clear();
+    l2.push_back(10);
+    l2.push_back(20);
+    l2.push_front(30);
+      for(auto it = l2.begin(); it != l2.end(); ++it)
+            std::cout << *it << '\n';
     return 0;
 }

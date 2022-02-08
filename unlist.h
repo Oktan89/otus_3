@@ -17,6 +17,9 @@ namespace otus
         };
         class Iterator 
         {
+        public:
+           // using iter = typename otus::unlist<T, Allocator>::Iterator;
+        private:
             Node* _it;
         public:
             Iterator() : _it(nullptr) {}
@@ -24,8 +27,8 @@ namespace otus
             Iterator(const Node &it) : _it(it){}
             Iterator& operator++();
             Iterator operator++(int);
-            bool operator==(const Iterator& rhs);
-            bool operator!=(const Iterator& rhs);
+            bool operator==(const Iterator& rhs) const noexcept;
+            bool operator!=(const Iterator& rhs) const noexcept;
             T& operator*();
         };
 
@@ -37,7 +40,7 @@ namespace otus
         using _node_alloc_type = typename Allocator::rebind<Node>::other;
         using iterator = typename unlist<T, Allocator>::Iterator;
         
-    protected:
+    private:
         _node_alloc_type _alloc;
         Node *_front = nullptr;
         Node *_end = nullptr;
@@ -45,16 +48,24 @@ namespace otus
         
     public:
         unlist() = default;
+
         unlist(const unlist& other);
-        // unlist(unlist&& other);
-        // unlist& operator=(const unlist& other);
-        // unlist& operator=(unlist&& other);
+
+        unlist(unlist&& other);
+
+        unlist& operator=(const unlist& other);
+
+        unlist& operator=(unlist&& other);
         
         bool push_back(const T& value);
      
         bool push_front(const T& value);
 
+        void clear();
+
         size_type size() const noexcept {return _count;}
+
+        std::size_t max_size() const noexcept {return _alloc.max_size();}
 
         [[nodiscard]] bool empty() const noexcept { return _front == _end;}
 
@@ -63,6 +74,8 @@ namespace otus
         iterator end() const noexcept;
 
         ~unlist();
+    private:
+       
 
     };
 
@@ -89,22 +102,70 @@ namespace otus
     }
 
     template <typename T, typename Allocator>
-    bool unlist<T, Allocator>::iterator::operator==(const Iterator& rhs)
+    bool unlist<T, Allocator>::iterator::operator==(const Iterator& rhs) const noexcept
     {
         return _it == rhs._it;
     }
 
     template <typename T, typename Allocator>
-    bool unlist<T, Allocator>::iterator::operator!=(const Iterator& rhs)
+    bool unlist<T, Allocator>::iterator::operator!=(const Iterator& rhs) const noexcept
     {
         return !(_it == rhs._it);
     }
 
     template <typename T, typename Allocator>
     unlist<T, Allocator>::unlist(const unlist& other)
-    {
+    {   
        for(auto &it : other)
             push_back(it);
+    }
+
+    template <typename T, typename Allocator>
+    unlist<T, Allocator>::unlist(unlist&& other)
+    {   
+
+        *this = std::move(other);
+// Notes
+// After container move construction (overload (8)), references, pointers, and iterators (other than the end iterator) to other remain valid, but refer to elements that are now in *this. The current standard makes this guarantee via the blanket statement in [container.requirements.general]/12, and a more direct guarantee is under consideration via LWG 2321.
+    }
+
+    template <typename T, typename Allocator>
+    unlist<T, Allocator>& unlist<T, Allocator>::operator=(unlist&& other)
+    {   
+       if(this == &other)
+             return *this;
+        _front = other._front;
+        _end = other._end;
+        _count = other._count;
+        _alloc = other._alloc;
+
+         other._front = nullptr;
+         other._end = nullptr;
+         other._count = 0;
+            
+        return *this;
+    }
+
+     template <typename T, typename Allocator>
+    unlist<T, Allocator>& unlist<T, Allocator>::operator=(const unlist& other)
+    {   
+        if(this == &other)
+             return *this;
+
+        Node *temp;
+
+        while (_front != nullptr)
+        {
+            temp = _front;
+            _front = _front->next;
+            _alloc.destroy(temp);
+            _alloc.deallocate(temp, 1);
+        }
+
+       for(auto &it : other)
+            push_back(it);
+
+        return *this;
     }
 
     template <typename T, typename Allocator>
@@ -119,6 +180,22 @@ namespace otus
             _alloc.destroy(temp);
             _alloc.deallocate(temp, 1);
         }
+    }
+
+    template <typename T, typename Allocator>
+    void unlist<T, Allocator>::clear()
+    {
+        Node *temp;
+
+        while (_front != nullptr)
+        {
+            temp = _front;
+            _front = _front->next;
+            _alloc.destroy(temp);
+            _alloc.deallocate(temp, 1);
+        }
+        _end = nullptr;
+        _count = 0;
     }
  
     template <typename T, typename Allocator>
