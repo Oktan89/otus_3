@@ -38,7 +38,8 @@ namespace otus
         using allocator_type = Allocator;
         using pointer = T *;
         using size_type = std::size_t;
-        using _node_alloc_type = typename Allocator::rebind<Node>::other;
+        //using _node_alloc_type = typename Allocator::rebind<Node>::other;
+        using _node_alloc_type = typename std::allocator_traits<Allocator>::template rebind_alloc<Node>;
         using iterator = typename unlist<T, Allocator>::Iterator;
         //using const_iterator = typename unlist<T, Allocator>::Iterator;
     private:
