@@ -3,8 +3,6 @@
 #include <gmock/gmock.h>
 #include "myalocator.h"
 #include "unlist.h"
-#include <map>
-#include <vector>
 #include <iostream>
 
 
